@@ -12,7 +12,6 @@ fn main() -> io::Result<()> {
 		} else {
 			f -= tmp;
 		}
-		println!("{} ({})", f, line);
 	}
 	
 	println!("{}", f);

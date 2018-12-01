@@ -1,5 +1,6 @@
 use std::io;
 use std::io::prelude::*;
+use std::collections::HashSet;
 
 fn main() -> io::Result<()> {
 	let mut buffer = String::new();
@@ -8,7 +9,7 @@ fn main() -> io::Result<()> {
 	
 	handle.read_to_string(&mut buffer)?;
 	let mut f = 0;
-	let mut vec: Vec<i64> = Vec::new();
+	let mut set: HashSet<i64> = HashSet::new();
 	let mut lines = buffer.lines();
 	loop {
 		match lines.next() {
@@ -19,17 +20,16 @@ fn main() -> io::Result<()> {
 				} else {
 					f -= tmp;
 				}
-				if vec.contains(&f) {
-					println!("Found: {}", f);
+				if set.contains(&f) {
+					println!("Found: {} ({} matches)", f, set.len());
 					break;
 				}
-				println!("{} ({})", f, vec.len());
-				vec.push(f);
+				set.insert(f);
 			}
 			None => {
 				lines = buffer.lines();
 			}
-		}	
+		}
 	}
 	
 	Ok(())
