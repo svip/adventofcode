@@ -1,35 +1,27 @@
 use std::io;
 use std::io::prelude::*;
-use std::collections::HashMap;
+use std::collections::HashSet;
 
 fn main() -> io::Result<()> {
 	let stdin = io::stdin();
-	let mut lines: HashMap<String, String> = HashMap::new();
-	for l in stdin.lock().lines() {
+	let mut lines: HashSet<String> = HashSet::new();
+	println!("{}", stdin.lock().lines().map(|l| {
 		let line = l.unwrap();
 		// Create a list of previous strings with only the characters they
-		// have in common.
-		let mut map: Vec<String> = lines.iter().map(|x| 
-			x.0.chars().zip(line.chars())
-			.filter(|x| x.0 == x.1)
-			.map(|x| x.0)
-			.collect::<String>()
-		).collect::<Vec<String>>();
-		
-		// Then sort the list, so the longest one is last and then add that
-		// element to our list of previous strings (as well as the characters of
-		// the one it had the most in common with).
-		map.sort_by(|x, y| x.len().cmp(&y.len()));		
-		match map.pop() {
-			Some(s) => { lines.insert(line, s); }
-			None => { lines.insert(line, "".to_string()); }
-		}
-	}
-	// Turn our list of values() (i.e. our common character lists) into a 
-	// vector so we can sort it, and take the first (longest) element.
-	let mut values: Vec<String> = lines.values().map(|v| v.clone()).collect();
-	values.sort_by(|x, y| y.len().cmp(&x.len()));
-	println!("{}", values[0]);
+		// have in common.  And find the longest of those.
+		let s = lines.iter().fold(String::new(), |mut longest, x| {
+			let s = x.chars().zip(line.chars())
+				.filter_map(|x| if x.0 == x.1 { Some(x.0) } else { None } )
+				.collect::<String>();
+			if s.len() > (*longest).len() { longest.clear(); longest.push_str(s.as_str()); }
+			longest
+		});
+		lines.insert(line);	
+		s
+	}).fold(String::new(), |mut longest, x| {
+		if x.len() > (*longest).len() { longest.clear(); longest.push_str(x.as_str()); }
+		longest
+	}));
 	
 	Ok(())
 }
