@@ -13,7 +13,7 @@ fn main() -> io::Result<()> {
 		set.values().fold((false,false), |a, &x| {
 			if x == 2 { (true, a.1) }
 			else if x == 3 { (a.0, true) }
-			else { (a.0, a.0) }
+			else { (a.0, a.1) }
 		})
 	}).fold((0,0), |a, x| (a.0 + (x.0 as i64), a.1 + (x.1 as i64)));
 	println!("{}", count.0*count.1);
