@@ -1,0 +1,10 @@
+[package]
+name = "day4-1"
+version = "1.0.0"
+
+[[bin]]
+name = "day4-1"
+path = "day4-1.rs"
+
+[dependencies]
+rust-crypto = "^0.2"
