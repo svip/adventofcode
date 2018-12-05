@@ -1,6 +1,7 @@
 use std::io;
 use std::io::prelude::*;
-use std::collections::HashMap;
+use std::thread;
+use std::collections::{HashSet, HashMap};
 
 fn react(s: String) -> String {
 	let mut result = "".to_string();
@@ -9,8 +10,8 @@ fn react(s: String) -> String {
 		if c.is_whitespace() {
 			continue;
 		}
-		if (c.is_lowercase() && p.is_uppercase() && c == p.to_lowercase().next().unwrap())
-			|| (c.is_uppercase() && p.is_lowercase() && c == p.to_uppercase().next().unwrap()) {
+		if (c.is_lowercase() && p.is_uppercase() && c == p.to_ascii_lowercase())
+			|| (c.is_uppercase() && p.is_lowercase() && c == p.to_ascii_uppercase()) {
 			result.pop();
 			p = ' ';
 		} else {
@@ -51,12 +52,22 @@ fn main() {
 		let line = l.unwrap();
 		buffer.push_str(line.as_str());
 	}
-	let mut map: HashMap<char, usize> = HashMap::new();
+	let mut used_characters: HashSet<char> = HashSet::new();
+	let mut handles = vec![];
 	for c in buffer.clone().chars() {
-		let l = c.to_lowercase().next().unwrap();
-		if map.get(&l) == None {
-			map.insert(l, remove_and_react(buffer.clone(), l).len());
+		let l = c.to_ascii_lowercase();
+		if used_characters.get(&l) == None {
+			used_characters.insert(l);
+			let text = buffer.clone();
+			handles.push(thread::spawn(move || {
+				(l, remove_and_react(text, l).len())
+			}));
 		}
+	}
+	let mut map: HashMap<char, usize> = HashMap::new();
+	for t in handles {
+		let res = t.join().unwrap();
+		map.insert(res.0, res.1);
 	}
 	let mut least = buffer.len();
 	for v in map.values() {
