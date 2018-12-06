@@ -1,7 +1,7 @@
 use std::io;
 use std::io::prelude::*;
 use std::cmp::{min, max};
-use std::collections::HashMap;
+use std::thread;
 
 fn main() {
 	let stdin = io::stdin();
@@ -23,17 +23,29 @@ fn main() {
 		}
 		coords.push((x, y));
 	}
-	let mut map: HashMap<(u16, u16), u32> = HashMap::new();
+	let limit = 10000;
+	let mut handles = vec![];
 	for x in x1..x2+1 {
-		for y in y1..y2+1 {
-			let mut sum = 0;
-			for c in coords.clone() {
-				let distance = (max(c.0, x) - min(c.0, x)) + (max(c.1, y) - min(c.1, y));
-				sum += distance as u32;
+		let nc = coords.clone();
+		handles.push(thread::spawn(move || {
+			let mut i = 0;
+			'y: for y in y1..y2+1 {
+				let mut sum = 0;
+				for c in nc.clone() {
+					let distance = (max(c.0, x) - min(c.0, x)) + (max(c.1, y) - min(c.1, y));
+					sum += distance as u32;
+					if sum >= limit {
+						continue 'y;
+					}
+				}
+				i += 1;
 			}
-			map.insert((x, y), sum);
-		}
+			i
+		}));
 	}
-	let size = map.values().filter(|s| **s < 10000).count();
-	println!("{}", size);
+	let mut region = 0;
+	for h in handles {
+		region += h.join().unwrap();
+	}
+	println!("{}", region);
 }
