@@ -24,7 +24,6 @@ fn main() {
 	const TOTALWORKERS: usize = 5;
 	const BASETIME: u8 = 60;
 	let mut workers: [(char, u8); TOTALWORKERS] = [(' ', 0); TOTALWORKERS];
-	//let mut working: HashMap<char, (u8, u8)>;
 	index.sort_by(|x, y| x.0.cmp(&y.0));
 	let mut done: Vec<char> = vec![];
 	let mut sec = 0;
@@ -80,13 +79,16 @@ fn main() {
 			}
 			i += 1;
 		}
-		println!("{:4} {}{}", sec,
+		/*println!("{:4} {}{}", sec,
 			workers.iter().map(|i| format!("{} ", i.0)).collect::<String>(),
 			done.clone().iter().collect::<String>());
+		*/
 		sec += 1;
 	}
 	
-	println!("{:4} {}{}", sec,
+	/*println!("{:4} {}{}", sec,
 		workers.iter().map(|i| format!("{} ", i.0)).collect::<String>(),
 		done.clone().iter().collect::<String>());
+	*/
+	println!("{}", sec);
 }
