@@ -8,7 +8,7 @@ fn main() {
 	let (players, lastmarble) = (v[0].parse::<i32>().unwrap(), v[6].parse::<i64>().unwrap());
 	
 	let mut curplayer = 1;
-	const MAXARENA: usize = 10_000_000;
+	const MAXARENA: usize = 100_000;
 	let mut arena: [(usize, usize); MAXARENA] = [(0,0); MAXARENA];
 	let mut scores: Vec<i64> = vec![];
 	for _ in 1..players+1 {
