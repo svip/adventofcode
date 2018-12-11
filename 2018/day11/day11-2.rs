@@ -29,7 +29,8 @@ fn main() {
 			}
 		}
 	}
-	let mut result_grid: Vec<(usize, usize, usize, i32)> = vec![];
+	let mut most_power = 0;
+	let (mut result_x, mut result_y, mut result_size) = (0, 0, 0);
 	for y in 1..HEIGHT+1 {
 		for x in 1..WIDTH+1 {
 			let gridid = (y-1)*WIDTH + x-1;
@@ -37,20 +38,15 @@ fn main() {
 			for size in 1..extreme {
 				let power = sumtable[gridid] + sumtable[gridid+size+WIDTH*size]
 					- sumtable[gridid+size] - sumtable[gridid+WIDTH*size];
-				// Not entirely sure why, but I had an off by one error, so...
-				result_grid.push((x+1, y+1, size, power));
+				if power > most_power {
+					most_power = power;
+					// Not entirely sure why, but I had an off by one error, so...
+					result_x = x+1;
+					result_y = y+1;
+					result_size = size;
+				}
 			};
 		}
 	}
-	let mut most_power = 0;
-	let (mut x, mut y, mut size) = (0, 0, 0);
-	for e in result_grid.iter() {
-		if e.3 > most_power {
-			most_power = e.3;
-			x = e.0;
-			y = e.1;
-			size = e.2;
-		}
-	}
-	println!("{}, {}, {} with {}", x, y, size, most_power);
+	println!("{}, {}, {} with {}", result_x, result_y, result_size, most_power);
 }
