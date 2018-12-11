@@ -1,7 +1,6 @@
 use std::io;
 use std::io::prelude::*;
 use std::cmp::max;
-use std::thread;
 
 fn main() {
 	let stdin = io::stdin();
@@ -9,6 +8,7 @@ fn main() {
 	const WIDTH: usize = 299;
 	const HEIGHT: usize = 299;
 	let mut grid: [i32; WIDTH*HEIGHT] = [0; WIDTH*HEIGHT];
+	let mut sumtable: [i32; WIDTH*HEIGHT] = [0; WIDTH*HEIGHT];
 	for y in 1..HEIGHT+1 {
 		for x in 1..WIDTH+1 {
 			let id = (y-1)*WIDTH + x-1;
@@ -19,42 +19,28 @@ fn main() {
 			value = if value >= 100 { (value/100)%10 } else { 0 };
 			value -= 5;
 			grid[id] = value;
+			if x > 1 && y > 1 {
+				sumtable[id] = grid[id] + sumtable[id-1] 
+					+ sumtable[id-WIDTH] - sumtable[id-WIDTH-1];
+			} else if x > 1 {
+				sumtable[id] = grid[id] + sumtable[id-1];
+			} else {
+				sumtable[id] = grid[id];
+			}
 		}
 	}
 	let mut result_grid: Vec<(usize, usize, usize, i32)> = vec![];
-	let mut handles = vec![];
-	const DIVISION: usize = 8;
-	for xy in 0..HEIGHT/DIVISION {
-		let (y1, y2) = (xy*DIVISION+1, xy*DIVISION+DIVISION+1);
-		let builder = thread::Builder::new()
-						.name(format!("Thread: {}", xy))
-						.stack_size(WIDTH*WIDTH*HEIGHT);
-		handles.push(builder.spawn(move || {
-			let mut sub: Vec<(usize, usize, usize, i32)> = vec![];
-			for y in y1..y2 {
-				for x in 1..WIDTH+1 {
-					let gridid = (y-1)*WIDTH + x-1;
-					for size in 1..(WIDTH-(max(x,y)-1))+1 {
-						let mut power = 0;
-						for ix in 0..size {
-							for iy in 0..size {
-								power += grid[gridid+(iy*WIDTH)+ix];
-							}
-						}
-						sub.push((x, y, size, power));
-					};
-				}
-			}
-			print!(".");
-			let _ = io::stdout().flush();
-			sub
-		}));
-	}
-	let mut init = true;
-	for t in handles {
-		let mut res = t.unwrap().join().unwrap();
-		if init { println!(""); init = false; }
-		result_grid.append(&mut res);
+	for y in 1..HEIGHT+1 {
+		for x in 1..WIDTH+1 {
+			let gridid = (y-1)*WIDTH + x-1;
+			let extreme = WIDTH-max(x,y)+1;
+			for size in 1..extreme {
+				let power = sumtable[gridid] + sumtable[gridid+size+WIDTH*size]
+					- sumtable[gridid+size] - sumtable[gridid+WIDTH*size];
+				// Not entirely sure why, but I had an off by one error, so...
+				result_grid.push((x+1, y+1, size, power));
+			};
+		}
 	}
 	let mut most_power = 0;
 	let (mut x, mut y, mut size) = (0, 0, 0);
