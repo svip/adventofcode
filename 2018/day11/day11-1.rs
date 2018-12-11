@@ -6,7 +6,7 @@ fn main() {
 	let serial = stdin.lock().lines().next().unwrap().unwrap().parse::<i32>().unwrap();
 	const WIDTH: usize = 299;
 	const HEIGHT: usize = 299;
-	let mut grid: [i32; WIDTH*HEIGHT] = [0; WIDTH*HEIGHT];
+	let mut sumtable: [i32; WIDTH*HEIGHT] = [0; WIDTH*HEIGHT];
 	for y in 1..HEIGHT+1 {
 		for x in 1..WIDTH+1 {
 			let id = (y-1)*WIDTH + x-1;
@@ -16,28 +16,32 @@ fn main() {
 			value = value * (x as i32 + 10);
 			value = if value >= 100 { (value/100)%10 } else { 0 };
 			value -= 5;
-			grid[id] = value;
-		}
-	}
-	let mut result_grid: [(usize, usize, i32); (WIDTH-2)*(HEIGHT-2)] = [(0,0,0); (WIDTH-2)*(HEIGHT-2)];
-	for y in 1..HEIGHT-1 {
-		for x in 1..WIDTH-1 {
-			let id = (y-1)*(WIDTH-2) + x-1;
-			let gridid = (y-1)*WIDTH + x-1;
-			let power = grid[gridid] + grid[gridid+1] + grid[gridid+2]
-				+ grid[gridid+WIDTH] + grid[gridid+WIDTH+1] + grid[gridid+WIDTH+2]
-				+ grid[gridid+WIDTH*2] + grid[gridid+WIDTH*2+1] + grid[gridid+WIDTH*2+2];
-			result_grid[id] = (x, y, power);
+			if x > 1 && y > 1 {
+				sumtable[id] = value + sumtable[id-1] 
+					+ sumtable[id-WIDTH] - sumtable[id-WIDTH-1];
+			} else if x > 1 {
+				sumtable[id] = value + sumtable[id-1];
+			} else {
+				sumtable[id] = value;
+			}
 		}
 	}
 	let mut most_power = 0;
-	let (mut x, mut y) = (0, 0);
-	for e in result_grid.iter() {
-		if e.2 > most_power {
-			most_power = e.2;
-			x = e.0;
-			y = e.1;
+	let (mut result_x, mut result_y) = (0, 0);
+	for y in 1..HEIGHT-2 {
+		for x in 1..WIDTH-2 {
+			let gridid = (y-1)*WIDTH + x-1;
+			let size = 3;
+			let power = sumtable[gridid] + sumtable[gridid+size+WIDTH*size]
+				- sumtable[gridid+size] - sumtable[gridid+WIDTH*size];
+			if power > most_power {
+				most_power = power;
+				// Not entirely sure why, but I had an off by one error, so...
+				result_x = x+1;
+				result_y = y+1;
+			}
 		}
 	}
-	println!("{}, {} with {}", x, y, most_power);
+	println!("{}, {} with {}", result_x, result_y, most_power);
 }
+
