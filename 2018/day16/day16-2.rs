@@ -6,27 +6,27 @@ use std::fmt;
 #[derive(Copy)]
 enum Op {
 	Addr, //(add register) stores into register C the result of adding register A and register B.
-    Addi, //(add immediate) stores into register C the result of adding register A and value B.
+	Addi, //(add immediate) stores into register C the result of adding register A and value B.
 
-    Mulr, // (multiply register) stores into register C the result of multiplying register A and register B.
-    Muli, // (multiply immediate) stores into register C the result of multiplying register A and value B.
+	Mulr, // (multiply register) stores into register C the result of multiplying register A and register B.
+	Muli, // (multiply immediate) stores into register C the result of multiplying register A and value B.
 
-    Banr, // (bitwise AND register) stores into register C the result of the bitwise AND of register A and register B.
-    Bani, // (bitwise AND immediate) stores into register C the result of the bitwise AND of register A and value B.
+	Banr, // (bitwise AND register) stores into register C the result of the bitwise AND of register A and register B.
+	Bani, // (bitwise AND immediate) stores into register C the result of the bitwise AND of register A and value B.
 
-    Borr, // (bitwise OR register) stores into register C the result of the bitwise OR of register A and register B.
-    Bori, // (bitwise OR immediate) stores into register C the result of the bitwise OR of register A and value B.
+	Borr, // (bitwise OR register) stores into register C the result of the bitwise OR of register A and register B.
+	Bori, // (bitwise OR immediate) stores into register C the result of the bitwise OR of register A and value B.
 
-    Setr, // (set register) copies the contents of register A into register C. (Input B is ignored.)
-    Seti, // (set immediate) stores value A into register C. (Input B is ignored.)
+	Setr, // (set register) copies the contents of register A into register C. (Input B is ignored.)
+	Seti, // (set immediate) stores value A into register C. (Input B is ignored.)
 
-    Gtir, // (greater-than immediate/register) sets register C to 1 if value A is greater than register B. Otherwise, register C is set to 0.
-    Gtri, // (greater-than register/immediate) sets register C to 1 if register A is greater than value B. Otherwise, register C is set to 0.
-    Gtrr, // (greater-than register/register) sets register C to 1 if register A is greater than register B. Otherwise, register C is set to 0.
+	Gtir, // (greater-than immediate/register) sets register C to 1 if value A is greater than register B. Otherwise, register C is set to 0.
+	Gtri, // (greater-than register/immediate) sets register C to 1 if register A is greater than value B. Otherwise, register C is set to 0.
+	Gtrr, // (greater-than register/register) sets register C to 1 if register A is greater than register B. Otherwise, register C is set to 0.
 
-    Eqir, // (equal immediate/register) sets register C to 1 if value A is equal to register B. Otherwise, register C is set to 0.
-    Eqri, // (equal register/immediate) sets register C to 1 if register A is equal to value B. Otherwise, register C is set to 0.
-    Eqrr, // (equal register/register) sets register C to 1 if register A is equal to register B. Otherwise, register C is set to 0.
+	Eqir, // (equal immediate/register) sets register C to 1 if value A is equal to register B. Otherwise, register C is set to 0.
+	Eqri, // (equal register/immediate) sets register C to 1 if register A is equal to value B. Otherwise, register C is set to 0.
+	Eqrr, // (equal register/register) sets register C to 1 if register A is equal to register B. Otherwise, register C is set to 0.
 }
 
 impl Clone for Op {
