@@ -38,6 +38,8 @@ fn main() {
 		}
 	}
 	let mut generation: u64 = 1;
+	let mut earlier_patterns: Vec<Vec<bool>> = vec![];
+	const MAX_GENERATIONS: u64 = 50_000_000_000;
 	loop {
 		let begin = first - 2;
 		let end = last + 2;
@@ -68,18 +70,39 @@ fn main() {
 			}
 			}
 		}
+		let mut pattern: Vec<bool> = vec![];
+		for i in smallest..largest+1 {
+			pattern.push(newpots.contains(&i));
+		} 
 		pots = newpots.clone();
 		
-		if generation == 200 {
-			// Assume the pattern has been established here.
-			let g = 50000000000/generation;
-			let mut sum = 0;
-			for v in pots.clone() {
-				sum += v as i64;
+		if earlier_patterns.len() > 10 {
+			let mut matches = 0;
+			let mut count = 0;
+			let mut counts: Vec<u64> = vec![];
+			'maploop: for a_pattern in earlier_patterns.clone() {
+				if a_pattern == pattern {
+					matches += 1;
+					counts.push(count);
+					count = 0;
+				}
+				count += 1;
 			}
-			println!("{}", ((sum/1000)*1000)*g as i64 + sum % 1000);
-			break;
+			if matches >= 5 {
+				if counts[1] == counts[2] && counts[2] == counts[3] && counts[3] == counts[4] {
+					if counts[0] + ((MAX_GENERATIONS-counts[0])/counts[1])*counts[1] == MAX_GENERATIONS {
+						let diff = MAX_GENERATIONS-generation;
+						let mut sum: u64 = 0;
+						for v in pots.clone() {
+							sum += v as u64 + diff;
+						}
+						println!("{}", sum);
+						break;
+					}
+				}
+			}
 		}
+		earlier_patterns.push(pattern);
 		
 		generation += 1;
 	}
