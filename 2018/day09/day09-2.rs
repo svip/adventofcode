@@ -11,10 +11,7 @@ fn main() {
 	let mut curplayer = 1;
 	const MAXARENA: usize = 10_000_000;
 	let mut arena: Vec<(usize, usize)> = vec![(0,0); MAXARENA];
-	let mut scores: Vec<i64> = vec![];
-	for _ in 1..players+1 {
-		scores.push(0);
-	}
+	let mut scores: Vec<i64> = vec![0; players as usize];
 	let mut nextid = 0;
 	for marble in 1..(lastmarble+1) as usize {
 		if marble % 23 == 0 {

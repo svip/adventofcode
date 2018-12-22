@@ -9,7 +9,7 @@ fn main() {
 	
 	let mut curplayer = 1;
 	const MAXARENA: usize = 100_000;
-	let mut arena: [(usize, usize); MAXARENA] = [(0,0); MAXARENA];
+	let mut arena: Box<[(usize, usize); MAXARENA]> = Box::new([(0,0); MAXARENA]);
 	let mut scores: Vec<i64> = vec![];
 	for _ in 1..players+1 {
 		scores.push(0);
