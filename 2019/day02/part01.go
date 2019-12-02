@@ -30,14 +30,14 @@ main:
 	for {
 		opcode := positions[p]
 		switch opcode {
-		case 1,2:
+		case 1, 2:
 			a_pos, b_pos, c_pos := positions[p+1], positions[p+2], positions[p+3]
 			a, b := positions[a_pos], positions[b_pos]
 			var c int
 			if opcode == 1 { // addition
-				c = a+b
+				c = a + b
 			} else if opcode == 2 { // multiplication
-				c = a*b
+				c = a * b
 			}
 			positions[c_pos] = c
 			p += 4
